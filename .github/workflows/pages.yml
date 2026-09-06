@@ -1,0 +1,75 @@
+name: Validate and deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:ui
+      - name: Build for the Pages path
+        env:
+          CONFIGURED_BASE: ${{ vars.VITE_BASE_PATH }}
+          REPOSITORY_NAME: ${{ github.event.repository.name }}
+          VITE_SITE_OPERATOR: ${{ vars.VITE_SITE_OPERATOR }}
+          VITE_CONTACT: ${{ vars.VITE_CONTACT }}
+          VITE_SECURITY_CONTACT: ${{ vars.VITE_SECURITY_CONTACT }}
+          VITE_RIGHTS_NOTICE: ${{ vars.VITE_RIGHTS_NOTICE }}
+        run: |
+          if [[ "${{ github.event_name }}" != "pull_request" ]]; then
+            for name in VITE_SITE_OPERATOR VITE_CONTACT VITE_SECURITY_CONTACT VITE_RIGHTS_NOTICE; do
+              if [ -z "${!name}" ]; then
+                echo "::error::$name must be configured as a repository variable before deployment"
+                exit 1
+              fi
+            done
+          fi
+          if [ -n "$CONFIGURED_BASE" ]; then
+            export VITE_BASE_PATH="$CONFIGURED_BASE"
+          elif [[ "$REPOSITORY_NAME" == *.github.io ]]; then
+            export VITE_BASE_PATH="/"
+          else
+            export VITE_BASE_PATH="/$REPOSITORY_NAME/"
+          fi
+          npm run build
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: dist
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
