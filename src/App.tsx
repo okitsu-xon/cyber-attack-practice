@@ -153,8 +153,8 @@ function LabWorkspace({
     "command-injection": ["Network Diagnostics", "接続確認ツール"],
     idor: ["Report Archive", "レポートをIDで検索"],
     "open-redirect": [
-      "ログインリンク作成",
-      "ログイン後の移動先を指定してください",
+      "ログイン後の移動先",
+      "next パラメータに指定されたURLへ移動します",
     ],
   };
 
@@ -318,9 +318,19 @@ function LabWorkspace({
                   <div className="request-prefix">GET /api/reports/</div>
                 )}
                 {lab.id === "open-redirect" && (
-                  <div className="request-prefix">
-                    https://portal.example/login?next=
-                  </div>
+                  <>
+                    <div className="request-prefix">
+                      https://portal.example/login?next=
+                    </div>
+                    <div className="redirect-scenario">
+                      <span className="micro-label">SIMULATED FLOW</span>
+                      <p>
+                        攻撃者がこの正規URLを送信 → 利用者が
+                        <strong> portal.example </strong>でログイン →
+                        <strong> next </strong>の指定先へ302転送
+                      </p>
+                    </div>
+                  </>
                 )}
                 <div className="input-row">
                   {lab.id === "command-injection" && (

@@ -246,14 +246,14 @@ return response(200, report);`,
   {
     id: "open-redirect",
     title: "Open Redirect",
-    subtitle: "外部URLが許可される条件を確かめる",
+    subtitle: "正規ログインURLを悪用した誘導を体験する",
     difficulty: "BEGINNER",
     target: "REDIRECT_LAB",
-    mission: "許可されていない外部サイトへの転送を再現する",
+    mission: "正規サイトを経由して偽サイトへ誘導されるリンクを再現する",
     context:
-      "ログイン後の移動先をリンクで指定できます。正規サイトのURLに見えても、その先が安全とは限りません。",
+      "ログイン後は next に指定されたURLへ移動します。攻撃者は portal.example の正規URLに外部の移動先を埋め込み、利用者をログイン後に偽サイトへ誘導します。",
     sample: "https://outside.example/welcome",
-    action: "ログインリンクを作成",
+    action: "リンクを検証する",
     hints: [
       "next の値がログイン後の遷移先としてURL解析されます。相対URLは portal.example 内に解決されます。",
       "httpまたはhttpsとして解決され、portal.exampleと異なるオリジンになるURLを指定すると外部転送になります。",
