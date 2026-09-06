@@ -310,7 +310,9 @@ test("about traps focus and returns focus to either opener", async ({
   await page.locator(".labs-tab").hover();
   const sidebarOpener = page.locator(".sidebar-about");
   await sidebarOpener.click();
-  await back.click();
+  await expect(page.locator(".modal-backdrop")).toHaveClass(/is-visible/);
+  await page.mouse.click(4, 4);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await expect(sidebarOpener).toBeFocused();
 });
 

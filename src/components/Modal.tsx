@@ -103,7 +103,12 @@ export function Modal({
   if (!rendered) return null;
 
   return (
-    <div className={`modal-backdrop ${visible ? "is-visible" : ""}`}>
+    <div
+      className={`modal-backdrop ${visible ? "is-visible" : ""}`}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose?.();
+      }}
+    >
       <div
         className="modal"
         ref={ref}
