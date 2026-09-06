@@ -252,11 +252,11 @@ function LabWorkspace({
           </div>
           <div className="mission-footer">
             <Shield />
-            <span>
+            {/* <span>
               失敗しても大丈夫。
               <br />
               <strong>何度でも試してみよう。</strong>
-            </span>
+            </span> */}
           </div>
         </aside>
 
