@@ -26,7 +26,7 @@ export const labs: readonly Lab[] = [
     subtitle: "認証回避が起きる条件を確かめる",
     difficulty: "BEGINNER",
     target: "SQL_LAB",
-    mission: "パスワードを知らない状態で認証条件を回避する",
+    mission: "ユーザーネーム：admin としてポータルに侵入する。",
     context:
       "ログインフォームの裏では、入力値がそのままSQLにつながれています。認証条件の組み立て方に注目してください。",
     sample: "unknown' OR '1'='1' --",
